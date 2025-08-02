@@ -1,0 +1,31 @@
+/*
+ * Homework 3
+ * Display CSS source code
+ *
+ * Author: Denis Gracanin
+ * Author: Kyle Hong
+ * Version: 1.0
+ */
+
+ /*
+  * Aligns display text to the right.
+  */
+.Display > input[type="text"] {
+  text-align: right;
+}
+
+ /*
+  * Sets background color of temperature scale,
+  * and sets text color to white.
+  */
+.Display > select, option {
+    background-color: maroon;
+    color: white;
+}
+
+ /*
+  * Sets length of the temperature scale box to 100 pixels.
+  */
+.Display > select {
+    width: 100px;
+}

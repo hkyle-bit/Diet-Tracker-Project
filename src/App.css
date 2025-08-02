@@ -1,0 +1,17 @@
+/*
+ * Homework 3
+ * App CSS source code
+ *
+ * Author: Denis Gracanin
+ * Author: Kyle Hong
+ * Version: 1.0
+ */
+
+ /*
+  * Sets background color of App to orange.
+  * This makes it the default background color.
+  */
+body {
+  margin : 5px;
+  background-color : orange;
+}

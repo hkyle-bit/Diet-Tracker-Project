@@ -1,0 +1,30 @@
+/*
+ * Homework 3
+ * Selector CSS source code
+ *
+ * Author: Denis Gracanin
+ * Author: Kyle Hong
+ * Version: 1.0
+ */
+
+ /*
+  * Aligns text in the box for Selector to the right.
+  */
+ .Selector > input[type="text"] {
+    text-align: right;
+}
+
+ /*
+  * Makes the box's background maroon and text color white.
+  */
+.Selector > select, option {
+    background-color: maroon;
+    color: white;
+}
+
+ /*
+  * Size of box is 100 pixels.
+  */
+.Selector > select {
+    width: 100px;
+}
