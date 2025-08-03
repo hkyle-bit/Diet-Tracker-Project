@@ -404,7 +404,7 @@ function Selector(props) {
                 and output into the bottom box depending on what scale is selected there." 
                 placement="right"
             >
-            <Select onChange={props.onChangeScale} value={props.value} defaultValue={0} data-tooltip-id="Selector-scales-tooltip" data-tooltip-place="right"
+            <Select onChange={props.onChangeMeasurement} value={props.value} defaultValue={0} data-tooltip-id="Selector-scales-tooltip" data-tooltip-place="right"
             MenuProps={{ 
               MenuListProps: { 
                 disablePadding: true 
@@ -440,7 +440,6 @@ function Selector(props) {
                 fontFamily: 'Arial',
                 border: '1px solid gray',
                 display: 'flex-start',
-                
               }}>Grams</MenuItem>
               <MenuItem value={1} sx={{
                 backgroundColor: 'darkblue',
@@ -455,6 +454,138 @@ function Selector(props) {
             </Select>
           </Tooltip>
         </Grid>
+
+        {/* Hazardous substances according to the CDC https://www.fda.gov/food/chemical-contaminants-pesticides/environmental-contaminants-food */}
+        <Grid item xs={12} sm={6}>
+            <Toolbar 
+              sx={{ color: 'red', fontFamily: 'Times-New-Roman', fontSize: '16px', disablePadding: 'true'}}
+            >
+              Arsenic
+            </Toolbar>
+            <Tooltip title="Arsenic" 
+              placement="right"
+            >
+              <Input type="number" size="8" min="-459.67" defaultValue={0} disabled value={props.amountArsenic} onChange={props.onChangeAmount} data-tooltip-id="Selector-input-tooltip" data-tooltip-place="right"
+                sx={{
+                  background: 'white',
+                  color: 'black',
+                  fontSize: '12.5px',
+                  width: '169px', 
+                  height: '22.5px', 
+                  fontFamily: 'Arial',
+                  contentDisplay: 'flex-end',
+                  marginLeft: '25px',
+                  '& input[type="number"]': {
+                    textAlign: 'right',
+                  },
+                  '& input[type=number]::-webkit-outer-spin-button': {
+                    WebkitAppearance: 'none',
+                  },
+                  '& input[type=number]::-webkit-inner-spin-button': {
+                    WebkitAppearance: 'none',
+                  },
+                }}
+              >
+              </Input>
+            </Tooltip>
+                    
+            <Toolbar 
+              sx={{ color: 'red', fontFamily: 'Times-New-Roman', fontSize: '16px', disablePadding: 'true'}}
+            >
+              Lead
+            </Toolbar>
+            <Tooltip title="Lead" 
+              placement="right"
+            >
+              <Input type="number" size="8" min="-459.67" defaultValue={0} disabled value={props.amount} onChange={props.onChangeAmount} data-tooltip-id="Selector-input-tooltip" data-tooltip-place="right"
+                sx={{
+                  background: 'white',
+                  color: 'black',
+                  fontSize: '12.5px',
+                  width: '169px', 
+                  height: '22.5px', 
+                  fontFamily: 'Arial',
+                  contentDisplay: 'flex-end',
+                  marginLeft: '25px',
+                  '& input[type="number"]': {
+                    textAlign: 'right',
+                  },
+                  '& input[type=number]::-webkit-outer-spin-button': {
+                    WebkitAppearance: 'none',
+                  },
+                  '& input[type=number]::-webkit-inner-spin-button': {
+                    WebkitAppearance: 'none',
+                  },
+                }}
+              >
+              </Input>
+            </Tooltip>
+            
+            <Toolbar 
+              sx={{ color: 'red', fontFamily: 'Times-New-Roman', fontSize: '16px', disablePadding: 'true'}}
+            >
+              Mercury
+            </Toolbar>
+            <Tooltip title="Mercury" 
+              placement="right"
+            >
+              <Input type="number" size="8" min="-459.67" defaultValue={0} disabled value={props.amountMercury} onChange={props.onChangeAmount} danger={props.danger}
+                sx={{
+                  background: props.danger ? 'red' : 'white',
+                  color: 'black',
+                  fontSize: '12.5px',
+                  width: '169px', 
+                  height: '22.5px', 
+                  fontFamily: 'Arial',
+                  contentDisplay: 'flex-end',
+                  marginLeft: '25px',
+                  '& input[type="number"]': {
+                    textAlign: 'right',
+                  },
+                  '& input[type=number]::-webkit-outer-spin-button': {
+                    WebkitAppearance: 'none',
+                  },
+                  '& input[type=number]::-webkit-inner-spin-button': {
+                    WebkitAppearance: 'none',
+                  },
+                }}
+              >
+              {props.danger ? 'True' : 'False'}
+              </Input>
+            </Tooltip>
+            
+            <Toolbar 
+              sx={{ color: 'red', fontFamily: 'Times-New-Roman', fontSize: '16px', disablePadding: 'true'}}
+            >
+              Cadmium
+            </Toolbar>
+            <Tooltip title="Cadmium" 
+              placement="right"
+            >
+              <Input type="number" size="8" min="-459.67" defaultValue={0} disabled value={props.amount} onChange={props.onChangeAmount} data-tooltip-id="Selector-input-tooltip" data-tooltip-place="right"
+                sx={{
+                  background: 'white',
+                  color: 'black',
+                  fontSize: '12.5px',
+                  width: '169px', 
+                  height: '22.5px', 
+                  fontFamily: 'Arial',
+                  contentDisplay: 'flex-end',
+                  marginLeft: '25px',
+                  '& input[type="number"]': {
+                    textAlign: 'right',
+                  },
+                  '& input[type=number]::-webkit-outer-spin-button': {
+                    WebkitAppearance: 'none',
+                  },
+                  '& input[type=number]::-webkit-inner-spin-button': {
+                    WebkitAppearance: 'none',
+                  },
+                }}
+              >
+              </Input>
+            </Tooltip>
+          </Grid>
       </Grid> 
     </Box>
   );
