@@ -68,6 +68,60 @@ function Selector(props) {
               >
               </Input>
             </Tooltip>
+
+            {/*
+            <Tooltip title="The list of measurements are grams and percent daily intake." 
+                placement="right"
+            >
+            <Select onChange={props.onChangeMeasurement} value={props.value} defaultValue={0} data-tooltip-id="Selector-scales-tooltip" data-tooltip-place="right"
+            MenuProps={{ 
+              MenuListProps: { 
+                disablePadding: true 
+              } 
+            }}
+            sx={{
+                background: 'darkblue',
+                color: 'white',
+                fontSize: '13px',
+                width: '100px', 
+                height: '20px', 
+                fontFamily: 'Arial',
+                border: '1px solid gray',
+                display: 'flex-start',
+                paddingTop: '0',
+                '& .MuiSelect-select': {
+                  textAlign: 'left',         
+                  color: 'white',   
+                },
+                '& svg': {
+                  fill: 'white',
+                },
+              }}
+            >
+              
+              <MenuItem value={0} sx={{
+                backgroundColor: 'darkblue',
+                color: 'white',
+                fontSize: '13px',
+                width: '100px', 
+                height: '20px', 
+                fontFamily: 'Arial',
+                border: '1px solid gray',
+                display: 'flex-start',
+              }}>Grams</MenuItem>
+              <MenuItem value={1} sx={{
+                backgroundColor: 'darkblue',
+                color: 'white',
+                fontSize: '13px',
+                width: '100px', 
+                height: '20px', 
+                fontFamily: 'Arial',
+                border: '1px solid gray',
+                display: 'flex-start',
+              }}>Percent</MenuItem>
+            </Select>
+          </Tooltip>
+          */}
           </Grid>
 
         <Grid item xs={12} sm={6}>
@@ -393,67 +447,6 @@ function Selector(props) {
               </Input>
             </Tooltip>
             </Grid>
-
-            {/* Edited the Temperature Scale button to show a tooltip of how to use the temperature converter */}
-            {/* They are on the right to not cover other information. */}
-            {/* Added the id of the tooltip and the placement to the props. */}
-            {/* Changed html select to MUI Select, set default value to celsius, changed to sx since css no longer applies. */}
-            <Grid item xs={12} sm={6} marginTop={30.5}>
-            <Tooltip title="The list of scales are Celsius, Fahrenheit, Kelvin, and Rankine.
-                Selecting a different scale from the bottom will convert the temperature automatically
-                and output into the bottom box depending on what scale is selected there." 
-                placement="right"
-            >
-            <Select onChange={props.onChangeMeasurement} value={props.value} defaultValue={0} data-tooltip-id="Selector-scales-tooltip" data-tooltip-place="right"
-            MenuProps={{ 
-              MenuListProps: { 
-                disablePadding: true 
-              } 
-            }}
-            sx={{
-                background: 'darkblue',
-                color: 'white',
-                fontSize: '13px',
-                width: '100px', 
-                height: '20px', 
-                fontFamily: 'Arial',
-                border: '1px solid gray',
-                display: 'flex-start',
-                paddingTop: '0',
-                '& .MuiSelect-select': {
-                  textAlign: 'left',         
-                  color: 'white',   
-                },
-                '& svg': {
-                  fill: 'white',
-                },
-              }}
-            >
-              
-              {/* MUI MenuItem replaced HTML options */}
-              <MenuItem value={0} sx={{
-                backgroundColor: 'darkblue',
-                color: 'white',
-                fontSize: '13px',
-                width: '100px', 
-                height: '20px', 
-                fontFamily: 'Arial',
-                border: '1px solid gray',
-                display: 'flex-start',
-              }}>Grams</MenuItem>
-              <MenuItem value={1} sx={{
-                backgroundColor: 'darkblue',
-                color: 'white',
-                fontSize: '13px',
-                width: '100px', 
-                height: '20px', 
-                fontFamily: 'Arial',
-                border: '1px solid gray',
-                display: 'flex-start',
-              }}>Percent</MenuItem>
-            </Select>
-          </Tooltip>
-        </Grid>
 
         {/* Hazardous substances according to the CDC https://www.fda.gov/food/chemical-contaminants-pesticides/environmental-contaminants-food */}
         <Grid item xs={12} sm={6}>

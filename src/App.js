@@ -1,18 +1,21 @@
 //
-// Homework 3
+// Project
 // App JavaScript source code
 //
-// Author: Denis Gracanin
 // Author: Kyle Hong
 // Version: 1.0
 //
 import './App.css';
 import Selector from './Selector.js';
+import BarChart from './BarChart.tsx';
 // Start implementing MUI
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
 import { useState } from 'react';
+// import output.css for Tailwind usage by CDN
+import './output.css';
 
+// Limitation: Not using MongoDB, not tracking common health numbers such as fats for danger levels
 function App() {
 // MVC: model starts
   // Used in MVC controller functions to set the food/beverage title and amount in grams
@@ -133,15 +136,25 @@ function App() {
 
 // MVC: view starts
   return (
-    <Box className="App">
+    <Box className="App" sx={{ height: '100vh', display: 'grid', placeItems: 'center' }}>
       {/* Change div to Box to implement MUI library*/}
       {/* Replaced Header html element with MUI Toolbar, try to copy the styling as best as possible. */}
       {/* sx was similar to css, inspected components to try to match. However, some didn't work so I approximated them. */}
-      <Toolbar
-        sx={{ color: 'darkblue', fontFamily: 'Times-New-Roman', fontSize: '2rem', fontWeight: "bold", ml: '-1.5rem'}}
-      >
+      <Toolbar class="text-blue-800 text-4xl font-bold grid place-items-center h-screen"
+        sx={{ 
+          color: 'darkblue', 
+          fontFamily: 'Times-New-Roman', 
+          fontSize: '2rem', 
+          fontWeight: "bold",
+          textAlign: 'center',
+          minHeight: 'auto',
+        }}
+      > 
         Diet Tracker
       </Toolbar>
+      <Box class="text-blue-800 grid place-items-center h-screen">
+        All measurements are in grams.
+      </Box>
 
       {/* Selector uses props to pass information */}
       <Selector
@@ -155,6 +168,8 @@ function App() {
         value={measurement}
         danger={danger}
       />
+      <BarChart>
+      </BarChart>
     </Box>
   );
 // MVC: view ends
