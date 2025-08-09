@@ -9,8 +9,6 @@
 // imported MUI components
 import Box from '@mui/material/Box';
 import Input from '@mui/material/Input';
-import Select from '@mui/material/Select';
-import MenuItem from '@mui/material/MenuItem';
 import Tooltip from '@mui/material/Tooltip';
 import Grid from '@mui/material/Grid';
 import Toolbar from '@mui/material/Toolbar';
@@ -36,7 +34,7 @@ function Selector(props) {
         {/* Since they are around the right component hierarchically, they only pop up for that inner component as intended. */}
       <Grid container spacing={2} sx={{ justifyContent: 'left' }}>
         {/* Four inner grids to make Four columns */}
-        <Grid item xs={12} sm={6}>
+        <Grid>
           <Toolbar 
             sx={{ color: 'darkblue', fontFamily: 'Times-New-Roman', fontSize: '16px', disablePadding: 'true'}}
           >
@@ -45,7 +43,7 @@ function Selector(props) {
             <Tooltip title="Food/Beverage Product" 
               placement="right"
             >
-              <Input type="string" size="8" min="-459.67" onChange={props.onChangeText} data-tooltip-id="Selector-input-tooltip" data-tooltip-place="right"
+              <Input type="string" size="8" min="-459.67" foodtext={props.foodText} onChange={props.onChangeText} data-tooltip-id="Selector-input-tooltip" data-tooltip-place="right"
                 sx={{
                   background: 'white',
                   color: 'black',
@@ -68,63 +66,9 @@ function Selector(props) {
               >
               </Input>
             </Tooltip>
-
-            {/*
-            <Tooltip title="The list of measurements are grams and percent daily intake." 
-                placement="right"
-            >
-            <Select onChange={props.onChangeMeasurement} value={props.value} defaultValue={0} data-tooltip-id="Selector-scales-tooltip" data-tooltip-place="right"
-            MenuProps={{ 
-              MenuListProps: { 
-                disablePadding: true 
-              } 
-            }}
-            sx={{
-                background: 'darkblue',
-                color: 'white',
-                fontSize: '13px',
-                width: '100px', 
-                height: '20px', 
-                fontFamily: 'Arial',
-                border: '1px solid gray',
-                display: 'flex-start',
-                paddingTop: '0',
-                '& .MuiSelect-select': {
-                  textAlign: 'left',         
-                  color: 'white',   
-                },
-                '& svg': {
-                  fill: 'white',
-                },
-              }}
-            >
-              
-              <MenuItem value={0} sx={{
-                backgroundColor: 'darkblue',
-                color: 'white',
-                fontSize: '13px',
-                width: '100px', 
-                height: '20px', 
-                fontFamily: 'Arial',
-                border: '1px solid gray',
-                display: 'flex-start',
-              }}>Grams</MenuItem>
-              <MenuItem value={1} sx={{
-                backgroundColor: 'darkblue',
-                color: 'white',
-                fontSize: '13px',
-                width: '100px', 
-                height: '20px', 
-                fontFamily: 'Arial',
-                border: '1px solid gray',
-                display: 'flex-start',
-              }}>Percent</MenuItem>
-            </Select>
-          </Tooltip>
-          */}
           </Grid>
 
-        <Grid item xs={12} sm={6}>
+        <Grid>
           <Toolbar 
             sx={{ color: 'darkblue', fontFamily: 'Times-New-Roman', fontSize: '16px', disablePadding: 'true'}}
           >
@@ -286,7 +230,7 @@ function Selector(props) {
             </Tooltip>
             </Grid>
             
-            <Grid item xs={12} sm={6}>
+            <Grid>
             <Toolbar 
               sx={{ color: 'darkblue', fontFamily: 'Times-New-Roman', fontSize: '16px', disablePadding: 'true'}}
             >
@@ -449,7 +393,7 @@ function Selector(props) {
             </Grid>
 
         {/* Hazardous substances according to the CDC https://www.fda.gov/food/chemical-contaminants-pesticides/environmental-contaminants-food */}
-        <Grid item xs={12} sm={6}>
+        <Grid>
             <Toolbar 
               sx={{ color: 'red', fontFamily: 'Times-New-Roman', fontSize: '16px', disablePadding: 'true'}}
             >
@@ -458,39 +402,7 @@ function Selector(props) {
             <Tooltip title="Arsenic" 
               placement="right"
             >
-              <Input type="number" size="8" min="-459.67" defaultValue={0} disabled value={props.amountArsenic} onChange={props.onChangeAmount} data-tooltip-id="Selector-input-tooltip" data-tooltip-place="right"
-                sx={{
-                  background: 'white',
-                  color: 'black',
-                  fontSize: '12.5px',
-                  width: '169px', 
-                  height: '22.5px', 
-                  fontFamily: 'Arial',
-                  contentDisplay: 'flex-end',
-                  marginLeft: '25px',
-                  '& input[type="number"]': {
-                    textAlign: 'right',
-                  },
-                  '& input[type=number]::-webkit-outer-spin-button': {
-                    WebkitAppearance: 'none',
-                  },
-                  '& input[type=number]::-webkit-inner-spin-button': {
-                    WebkitAppearance: 'none',
-                  },
-                }}
-              >
-              </Input>
-            </Tooltip>
-                    
-            <Toolbar 
-              sx={{ color: 'red', fontFamily: 'Times-New-Roman', fontSize: '16px', disablePadding: 'true'}}
-            >
-              Lead
-            </Toolbar>
-            <Tooltip title="Lead" 
-              placement="right"
-            >
-              <Input type="number" size="8" min="-459.67" defaultValue={0} disabled value={props.amount} onChange={props.onChangeAmount} data-tooltip-id="Selector-input-tooltip" data-tooltip-place="right"
+              <Input type="number" size="8" min="-459.67" disabled value={props.amountArsenic} onChange={props.onChangeAmount} data-tooltip-id="Selector-input-tooltip" data-tooltip-place="right"
                 sx={{
                   background: 'white',
                   color: 'black',
@@ -522,9 +434,9 @@ function Selector(props) {
             <Tooltip title="Mercury" 
               placement="right"
             >
-              <Input type="number" size="8" min="-459.67" defaultValue={0} disabled value={props.amountMercury} onChange={props.onChangeAmount} danger={props.danger}
+              <Input type="number" size="8" min="-459.67" disabled value={props.amountMercury} onChange={props.onChangeAmount}
                 sx={{
-                  background: props.danger ? 'red' : 'white',
+                  background: 'white',
                   color: 'black',
                   fontSize: '12.5px',
                   width: '169px', 
@@ -543,7 +455,6 @@ function Selector(props) {
                   },
                 }}
               >
-              {props.danger ? 'True' : 'False'}
               </Input>
             </Tooltip>
             
@@ -555,7 +466,7 @@ function Selector(props) {
             <Tooltip title="Cadmium" 
               placement="right"
             >
-              <Input type="number" size="8" min="-459.67" defaultValue={0} disabled value={props.amount} onChange={props.onChangeAmount} data-tooltip-id="Selector-input-tooltip" data-tooltip-place="right"
+              <Input type="number" size="8" min="-459.67" disabled value={props.amountCadmium} onChange={props.onChangeAmount}
                 sx={{
                   background: 'white',
                   color: 'black',

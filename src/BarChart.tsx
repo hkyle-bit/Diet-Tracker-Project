@@ -6,8 +6,18 @@ import React, { useEffect, useRef } from 'react';
 import { BarChart } from '@mui/x-charts/BarChart';
 import * as d3 from 'd3';
 
+type DataPoint = {
+  category: string;
+  value: number;
+};
+
+// Data for dangerous substances
+type BarChartProps = {
+  data: DataPoint[];
+};
+
 // Some global consts needed to be defined here to use later on
-const margin = { top: 20, right: 20, bottom: 50, left: 50 };
+const margin = { top: 20, right: 20, bottom: 100, left: 50 };
 
 // Dimension function so responsive dimensions can be reused
 const getDimensions = () => {
@@ -60,32 +70,32 @@ const MySVGComponent = ({ gl, display }: { gl: WebGLRenderingContext | null; dis
 };
 
 // Default function
-export default function Chart() {
+export default function Chart({ data }: BarChartProps) {
   // React ref for SVG
   const svgRef = useRef<SVGSVGElement | null>(null);
   // Call getDimensions here too
   const { width, height, innerWidth, innerHeight } = getDimensions();
+  // Need to ensure data is valid
+  //const data = Array.isArray(data) ? data : [];
+  //const data = Array.isArray(data)
+  //? data.filter(d => typeof d.value === 'number')
+ // : [];
 
   // svg and D3 need to be under useEffect()
-  useEffect(() => {
+  const drawChart = (data) => {
+    // Check if array is valid
+    if (!Array.isArray(data) || data.length === 0) return;
+
     // clear svg
     const svg = d3.select(svgRef.current);
     svg.selectAll('*').remove();
 
-    // given data
-    const data = [
-      { category: '1950', value: 2.525 },
-      { category: '1960', value: 3.018 },
-      { category: '1970', value: 3.682 },
-      { category: '1980', value: 4.440 },
-      { category: '1990', value: 5.310 },
-      { category: '2000', value: 6.127 },
-      { category: '2010', value: 6.930 },
-    ];
+    // get max value early to be used later on
+    const maxValue = d3.max(Array.isArray(data) ? data : [], d => d.value) ?? 0;
 
     // X Scale and Y Scale
     const xScale = d3.scaleBand()
-      .domain(data.map(d => d.category))
+      .domain((Array.isArray(data) ? data : []).map(d => d.category))
       .range([0, innerWidth])
       .padding(0.1);
 
@@ -95,7 +105,7 @@ export default function Chart() {
     // 6.930 + 0.07 = 7.00
     // By default, it created two separate lines.
     const yScale = d3.scaleLinear()
-      .domain([0, d3.max(data, d => d.value)! + 0.07])
+      .domain([0, maxValue * 1.1])
       .range([innerHeight, 0]);
 
     // Root SVG properties for the top-level SVG container
@@ -109,13 +119,11 @@ export default function Chart() {
       .attr('transform', `translate(${margin.left},${margin.top})`);
 
     // Axes
-    // Get the max value from data and sets it to maxValue
     // Create gridTicks each 0.5 apart
-    const maxValue = d3.max(data, d => d.value)!;
     const gridTicks = d3.range(0, Math.ceil(maxValue) + 0.5, 0.5);
 
     // add lines behind the bars barely visible, 0.5 apart
-    // numbers should be 1.0 apart instead of 0.5 (done so further down)
+    // numbers should be 0.00001 apart instead of 0.5 (done so further down)
     const gridGroup = chart.append('g').attr('class', 'gridlines');
 
     // line ticks
@@ -130,13 +138,15 @@ export default function Chart() {
       .attr('stroke', '#ddd')
       .attr('stroke-width', 1);
 
-    // Separate 1.0 axis ticks from line ticks above
-    const yAxisTicks = d3.range(0, Math.ceil(maxValue) + 1, 1);
+    // Separate 0.00001 axis ticks from line ticks above
+    // We are measuring tiny values
+    const step = maxValue / 10;
+    const yAxisTicks = d3.range(0, Math.ceil(maxValue), 0.0001); //d3.range(0, Math.ceil(maxValue) + step, step);
 
-    // yAxis calls custom const yAxisTicks that have 1.0 intervals
+    // yAxis calls custom const yAxisTicks that have 0.0001 intervals
     const yAxis = d3.axisLeft(yScale)
       .tickValues(yAxisTicks)
-      .tickFormat(d3.format('.0f'));
+      .tickFormat(x => Number(x).toFixed(5));
 
     // Appends it to svg
     chart.append('g')
@@ -144,35 +154,78 @@ export default function Chart() {
       .call(yAxis);
 
     // Bars (must be called after gridlines or gridlines will appear in front of bars)
-    // Correct color was determined by inspect tool
+    // Color turns red if above weekly limit
+    const thresholds = {
+      Arsenic: 1.5e-4,
+      Mercury: 1.1e-4,
+      Cadmium: 5.0e-4
+    };
+
+
     chart.selectAll('rect')
-      .data(data)
-      .enter()
-      .append('rect')
-      .attr('x', d => xScale(d.category)!)
-      .attr('y', d => yScale(d.value))
-      .attr('width', xScale.bandwidth())
-      .attr('height', d => innerHeight - yScale(d.value))
-      .attr('fill', '#42A5F5');
+    .data(data, d => d.category)
+    .join(
+      enter => enter.append('rect')
+        .attr('x', d => xScale(d.category)!)
+        .attr('width', xScale.bandwidth())
+        .attr('y', d => yScale(d.value))
+        .attr('height', d => innerHeight - yScale(d.value ?? 0))
+        .attr('fill', d => d.value > thresholds[d.category] ? '#d32f2f' : '#1976d2'),
+      update => update
+        .transition()
+        .duration(500)
+        .attr('y', d => yScale(d.value))
+        .attr('height', d => innerHeight - yScale(d.value ?? 0)),
+      exit => exit.remove()
+    );
 
     // Labels
     // Years
     chart.selectAll('.x-label')
-      .data(data)
-      .enter()
-      .append('text')
-      .attr('class', 'x-label')
-      .attr('x', d => xScale(d.category)! + xScale.bandwidth() / 2)
-      .attr('y', innerHeight + 30) // offset below bar
-      .attr('text-anchor', 'middle')
-      .text(d => d.category);
+    .data(data, d => d.category)
+    .join(
+      enter => enter.append('text')
+        .attr('class', 'x-label')
+        .attr('text-anchor', 'middle'),
+      update => update,
+      exit => exit.remove()
+    )
+    .attr('x', d => xScale(d.category)! + xScale.bandwidth() / 2)
+    .attr('y', innerHeight + 30)
+    .text(d => d.category);
+
+    // X-axis label
+    svg.append("text")
+      .attr("class", "x-axis-label")
+      .attr("text-anchor", "middle")
+      .attr("x", width / 2)
+      .attr("y", height + margin.bottom - 130)
+      .text("Current food/beverage hazardous substance levels")
+      .style("font-size", "16px")
+      .style("font-weight", "bold")
+      .style("fill", "#333");
+
+    // Y-axis label
+    svg.append("text")
+      .attr("class", "y-axis-label")
+      .attr("text-anchor", "middle")
+      .attr("transform", `rotate(-90)`)
+      .attr("x", -height / 2)
+      .attr("y", -margin.left + 15)
+      .text("Hazardous substances (grams)")
+      .style("font-size", "16px")
+      .style("font-weight", "bold")
+      .style("fill", "#333");
 
       // Little Bars above the years
       chart.selectAll('.bar-marker')
-        .data(data)
-        .enter()
-        .append('line')
-        .attr('class', 'bar-marker')
+        .data(data, d => d.category)
+        .join(
+          enter => enter.append('line')
+            .attr('class', 'bar-marker'),
+          update => update,
+          exit => exit.remove()
+        )
         .attr('x1', d => xScale(d.category)! + xScale.bandwidth() / 2)
         .attr('x2', d => xScale(d.category)! + xScale.bandwidth() / 2)
         .attr('y1', innerHeight)
@@ -180,7 +233,16 @@ export default function Chart() {
         .attr('stroke', '#000')
         .attr('stroke-width', 2);
 
-}, []);
+        // Check if data is valid
+        if (!Array.isArray(data))
+          return;
+  };
+  
+  useEffect(() => {
+  if (!Array.isArray(data)) return;
+
+  drawChart(data);
+}, [data, drawChart]);
 
   // div has variable width and height for responsiveness.
   // svg is created above and called down here.
@@ -195,43 +257,6 @@ export default function Chart() {
         preserveAspectRatio="xMidYMid meet"
         style={{ width: '100%', height: '100%' }}
       >
-        <BarChart
-          sx={{
-            '& svg': {
-              fill: 'white',
-            },
-          }}
-
-          colors={['#42A5F5',]}
-
-          xAxis={[
-            {
-              id: 'categories',
-              data: ['1950', '1960', '1970', '1980', '1990', '2000', '2010'],
-              scaleType: 'band',
-              tickMinStep: 1,
-              tickMaxStep: 1,
-            },
-          ]}
-          
-          yAxis={[
-            { 
-              min: 0,
-              max: 7,  
-              tickMinStep: 1,
-              tickMaxStep: 1,
-            }
-          ]}
-
-          series={[
-            { data: [2.525, 3.018, 3.682, 4.440, 5.310, 6.127, 6.930] }
-          ]}
-          
-          width={500}
-          height={300}
-          grid={{ horizontal: true }}
-        >
-        </BarChart>
       </svg>
     </div>
   );

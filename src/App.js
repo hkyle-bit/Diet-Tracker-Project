@@ -22,19 +22,88 @@ function App() {
   const [text, setText] = useState("");
   const [amount, setAmount] = useState("0");
   const [measurement, setMeasurement] = useState("0");
-  // Checks if the food/beverage contains tuna, ...
+
+  // Ensures text uses the food title and not the most recent input
+  const [foodText, setFoodText] = useState("");
+
+  // Checks if the food/beverage contains dangerous substances
   // Will only work accurately if the food is pure or the amount given is
   // just the dangerous portion of the food/beverage
+  const targetArsenic = ['rice', 'brown rice']; 
+  const isMatchArsenic = targetArsenic.some(rice =>
+    foodText.toLowerCase().includes(rice.toLowerCase())
+  );
+
   const targetMercury = ['tuna', 'marlin', 'swordfish', 'shark'];
   const isMatchMercury = targetMercury.some(fish =>
-    text.toLowerCase().includes(fish.toLowerCase())
+    foodText.toLowerCase().includes(fish.toLowerCase())
   );
-  const targetArsenic = 'rice'; 
-  const isMatchArsenic = text.toLowerCase().includes(targetArsenic);
-  let danger = false;
+
+  const targetCadmium = ['oyster', 'mussel', 'scallop', 'crab', 'lobster', 'seaweed'];
+  const isMatchCadmium = targetCadmium.some(seafood =>
+    foodText.toLowerCase().includes(seafood.toLowerCase())
+  );
+
+  // Data for Mongoose
+  const [chartData, setChartData] = useState([]);
+
+  // Save weekly data
+  // Will need user to delete data to start a new week because of project time constraint
+  const handleSave = () => {
+    const arsenicData = countArsenic();
+    const mercuryData = countMercury();
+    const cadmiumData = countCadmium();
+
+    const formattedData = [
+      { category: 'Arsenic', value: arsenicData },
+      { category: 'Mercury', value: mercuryData },
+      { category: 'Cadmium', value: cadmiumData }
+    ];
+
+    console.log("Sending to backend:", formattedData);
+
+    // Save all three entries
+    fetch('http://localhost:5000/api/chart', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(formattedData),
+    })
+      .then(res => res.json())
+      .then(saved => {
+        console.log('Saved:', saved);
+
+        // Fetch weekly summary grouped by category
+        return fetch('http://localhost:5000/api/chart/week-summary');
+      })
+      .then(res => res.json())
+      .then(summary => {
+        // Normalize chart to ensure all categories are present
+        const normalized = ['Arsenic', 'Mercury', 'Cadmium'].map(cat => {
+          const found = summary.find(d => d.category === cat);
+          return {
+            category: cat,
+            value: found ? found.value : 0
+          };
+        });
+
+        setChartData(normalized);
+      })
+      .catch(err => console.error('Error saving or fetching chart data:', err));
+  };
+
+
+  // Clear BarChart data
+  const handleClear = () => {
+    fetch('http://localhost:5000/api/chart', { method: 'DELETE' })
+      .then(() => {
+        setChartData([]);
+        console.log('Chart data cleared');
+      })
+      .catch(err => console.error('Error clearing chart data:', err));
+  };
 
   /*
-   * Returns the amount of harmful substance in a given food/beverage
+   * Returns the amount of arsenic in a given food/beverage
    */
   function countArsenic() {
     let dangerousAmount = 0;
@@ -46,16 +115,22 @@ function App() {
     // Rounding would keep adding 0 to the total instead of the actual amount
     // Known limitations: Can only track food that has been coded for, and only 1 harmful substance at a time
     // Numbers will turn red for AVERAGE body weight
-    if(isMatchArsenic && amount > 0){
-      // 92 parts per billion of arsenic per gram of white rice on average
-      dangerousAmount = 0.000000092 * amount;
-      console.log(0.000000092 * amount);
+    if(isMatchArsenic && amount > 0 && foodText.toLowerCase().includes(targetArsenic[0])){
+      // 150 parts per billion of arsenic per gram of white rice on average
+      dangerousAmount = 0.000000150 * amount;
+    }
+
+    if(isMatchArsenic && amount > 0 && foodText.toLowerCase().includes(targetArsenic[1])){
+      // 300 parts per billion of arsenic per gram of brown rice on average
+      dangerousAmount = 0.000000300 * amount;
     }
 
     return dangerousAmount;
   }
   
+  // Returns the amount of mercury in a food/beverage
   function countMercury() {
+
     let mercuryAmount = 0;
 
     // If name matches a hazardous food, check for harmful substance
@@ -66,56 +141,64 @@ function App() {
     // Known limitations: Can only track food that has been coded for, and only 1 harmful substance at a time
     // Numbers will turn red for AVERAGE body weight
     // Eventually need to change it so it turns red if the number is too high from MongooseDB
-    
+
     // Safe weekly Tuna amount
-    if(isMatchMercury && amount > 0 && text.toLowerCase() === targetMercury[0]){
+    if(isMatchMercury && amount > 0 && foodText.toLowerCase().includes(targetMercury[0])){
       // 60 micrograms of mercury per gram of tuna on average
       mercuryAmount = 0.00000060 * amount;
-
-      console.log(0.00000060 * amount);
-
-      if(amount >= 340.19){
-        danger = true;
-      }
     }
 
     // Safe weekly Marlin amount
-    if(isMatchMercury && amount > 0 && text.toLowerCase() === targetMercury[1]){
+    if(isMatchMercury && amount > 0 && foodText.toLowerCase().includes(targetMercury[1])){
       // 152 micrograms of mercury per gram of marlin on average
       mercuryAmount = 0.00000152 * amount;
-
-      console.log(0.00000152 * amount);
-
-      if(amount >= 140){
-        danger = true;
-      }
     }
 
     // Safe weekly Swordfish amount
-    if(isMatchMercury && amount > 0 && text.toLowerCase() === targetMercury[2]){
+    if(isMatchMercury && amount > 0 && foodText.toLowerCase().includes(targetMercury[2])){
       // 99.5 micrograms of mercury per gram of swordfish on average
       mercuryAmount = 0.000000995 * amount;
-
-      console.log(0.000000995 * amount);
-
-      if(amount >= 170){
-        danger = true;
-      }
     }
 
     // Safe weekly Shark amount
-    if(isMatchMercury && amount > 0 && text.toLowerCase() === targetMercury[3]){
-      // 99 micrograms of mercury per gram of tuna on average
+    if(isMatchMercury && amount > 0 && foodText.toLowerCase().includes(targetMercury[3])){
+      // 99 micrograms of mercury per gram of shark on average
       mercuryAmount = 0.00000099 * amount;
-
-      console.log(0.00000099 * amount);
-
-      if(amount >= 150){
-        danger = true;
-      }
     }
 
     return mercuryAmount;
+  }
+
+  /*
+   * Returns the amount of cadmium in a given food/beverage
+   */
+  function countCadmium() {
+    let dangerousAmount = 0;
+
+    // If name matches a hazardous food, check for harmful substance
+    // Will only be able to check common hazardous foods
+    // This time I should not use parse float because the amounts are so small
+    // It will only show meaningful results over a longer period of time
+    // Rounding would keep adding 0 to the total instead of the actual amount
+    // Known limitations: Can only track food that has been coded for, and only 1 harmful substance at a time
+    // Numbers will turn red for AVERAGE body weight
+    if(isMatchCadmium && amount > 0 && (foodText.toLowerCase().includes(targetCadmium[0]) ||
+    foodText.toLowerCase().includes(targetCadmium[1]) || foodText.toLowerCase().includes(targetCadmium[2]))){
+      // 0.00000125 grams of cadmium per gram of mollusks on average
+      dangerousAmount = 0.00000125 * amount;
+    }
+
+    if(isMatchCadmium && amount > 0 && (foodText.toLowerCase().includes(targetCadmium[3]) || foodText.toLowerCase().includes(targetCadmium[4]))){
+      // 0.0000015 grams of cadmium per gram of crab/lobster on average
+      dangerousAmount = 0.0000015 * amount;
+    }
+
+    if(isMatchCadmium && amount > 0 && foodText.toLowerCase().includes(targetCadmium[5])){
+      // 0.000001015 grams of cadmium per gram of seaweed on average
+      dangerousAmount = 0.000001015 * amount;
+    }
+
+    return dangerousAmount;
   }
 // MVC: model ends
 
@@ -140,7 +223,7 @@ function App() {
       {/* Change div to Box to implement MUI library*/}
       {/* Replaced Header html element with MUI Toolbar, try to copy the styling as best as possible. */}
       {/* sx was similar to css, inspected components to try to match. However, some didn't work so I approximated them. */}
-      <Toolbar class="text-blue-800 text-4xl font-bold grid place-items-center h-screen"
+      <Toolbar className="text-blue-800 text-4xl font-bold grid place-items-center h-screen"
         sx={{ 
           color: 'darkblue', 
           fontFamily: 'Times-New-Roman', 
@@ -152,23 +235,41 @@ function App() {
       > 
         Diet Tracker
       </Toolbar>
-      <Box class="text-blue-800 grid place-items-center h-screen">
+      <Box className="text-blue-800 grid place-items-center h-screen">
         All measurements are in grams.
       </Box>
 
       {/* Selector uses props to pass information */}
       <Selector
         amountArsenic={countArsenic()}
-        amountLead={countArsenic()}
         amountMercury={countMercury()}
-        amountCadmium={countMercury()}
-        onChangeText={handleChangeText}
+        amountCadmium={countCadmium()}
         onChangeAmount={handleChangeAmount}
         onChangeMeasurement={handleChangeMeasurement}
         value={measurement}
-        danger={danger}
+        foodText={foodText}
+        onChangeText={e => setFoodText(e.target.value)}
       />
-      <BarChart>
+
+      {/* Add save and delete buttons and ensure spacing. Add styling */}
+      <div className="space-y-4 mt-4">
+        <br />
+        <button
+          onClick={handleSave}
+          className="inline-block text-blue-800 text-1xl border border-blue-700 font-bold grid place-items-center h-screen"
+        >
+          Show Week Data
+        </button>
+        <br />
+        <button
+          onClick={handleClear}
+          className="inline-block text-blue-800 text-1xl border border-blue-700 font-bold grid place-items-center h-screen"
+        >
+          Delete Chart Data
+        </button>
+      </div>
+
+      <BarChart key={chartData.length} data={chartData}>
       </BarChart>
     </Box>
   );
