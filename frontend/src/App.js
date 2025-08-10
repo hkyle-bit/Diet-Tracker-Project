@@ -22,6 +22,21 @@ function App() {
   const [text, setText] = useState("");
   const [amount, setAmount] = useState("0");
   const [measurement, setMeasurement] = useState("0");
+  // Monthly or weekly
+  const [timeMode, setTimeMode] = useState('week');
+  // Nutrition or Hazard
+  const [mode, setMode] = useState('nutrition');
+
+  // Nutritional values
+  const [calories, setCalories] = useState("0");
+  const [protein, setProtein] = useState("0");
+  const [saturatedFats, setSaturatedFats] = useState("0");
+  const [transFats, setTransFats] = useState("0");
+  const [cholesterol, setCholesterol] = useState("0");
+  const [sodium, setSodium] = useState("0");
+  const [carbohydrates, setCarbohydrates] = useState("0");
+  const [fiber, setFiber] = useState("0");
+  const [sugar, setSugar] = useState("0");
 
   // Ensures text uses the food title and not the most recent input
   const [foodText, setFoodText] = useState("");
@@ -50,6 +65,118 @@ function App() {
   // Save weekly data
   // Will need user to delete data to start a new week because of project time constraint
   const handleSave = () => {
+    const formattedData = [
+      { category: 'Calories', value: calories },
+      { category: 'Saturated Fats', value: saturatedFats },
+      { category: 'Trans Fats', value: transFats },
+      { category: 'Cholesterol', value: cholesterol },
+      { category: 'Sodium', value: sodium },
+      { category: 'Carbohydrates', value: carbohydrates },
+      { category: 'Fiber', value: fiber },
+      { category: 'Sugar', value: sugar },
+      { category: 'Protein', value: protein }
+    ];
+
+    setTimeMode('week')
+    setMode('nutrition')
+
+    // Save all three entries
+    fetch('http://localhost:5000/api/chart', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(formattedData),
+    })
+      .then(res => res.json())
+      .then(saved => {
+       // console.log('Saved:', saved);
+
+        // Fetch weekly summary grouped by category
+        return fetch('http://localhost:5000/api/chart/week-summary');
+      })
+      .then(res => res.json())
+      .then(summary => {
+        const normalized = [
+          'Calories',
+          'Saturated Fats',
+          'Trans Fats',
+          'Cholesterol',
+          'Sodium',
+          'Carbohydrates',
+          'Fiber',
+          'Sugar',
+          'Protein'
+        ].map(cat => {
+          const found = summary.find(d => d.category === cat);
+          return {
+            category: cat,
+            value: found ? found.value : 0
+          };
+        });
+
+        setChartData(normalized);
+      })
+      .catch(err => console.error('Error saving or fetching chart data:', err));
+  };
+
+  // Save monthly data
+  // Will need user to delete data to start a new week because of project time constraint
+  const handleSaveMonthly = () => {
+    const formattedData = [
+      { category: 'Calories', value: calories },
+      { category: 'Saturated Fats', value: saturatedFats },
+      { category: 'Trans Fats', value: transFats },
+      { category: 'Cholesterol', value: cholesterol },
+      { category: 'Sodium', value: sodium },
+      { category: 'Carbohydrates', value: carbohydrates },
+      { category: 'Fiber', value: fiber },
+      { category: 'Sugar', value: sugar },
+      { category: 'Protein', value: protein }
+    ];
+
+    setTimeMode('month')
+    setMode('nutrition')
+
+    // Save all three entries
+    fetch('http://localhost:5000/api/chart', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(formattedData),
+    })
+      .then(res => res.json())
+      .then(saved => {
+       // console.log('Saved:', saved);
+
+        // Fetch weekly summary grouped by category
+        return fetch('http://localhost:5000/api/chart/week-summary');
+      })
+      .then(res => res.json())
+      .then(summary => {
+        const normalized = [
+          'Calories',
+          'Saturated Fats',
+          'Trans Fats',
+          'Cholesterol',
+          'Sodium',
+          'Carbohydrates',
+          'Fiber',
+          'Sugar',
+          'Protein'
+        ].map(cat => {
+          const found = summary.find(d => d.category === cat);
+          return {
+            category: cat,
+            value: found ? found.value : 0
+          };
+        });
+
+        setChartData(normalized);
+      })
+      .catch(err => console.error('Error saving or fetching chart data:', err));
+  };
+
+  // Save weekly hazardous data
+  // Will need user to delete data to start a new week because of project time constraint
+  const handleSaveHazardous = () => {
     const arsenicData = countArsenic();
     const mercuryData = countMercury();
     const cadmiumData = countCadmium();
@@ -60,7 +187,10 @@ function App() {
       { category: 'Cadmium', value: cadmiumData }
     ];
 
-    console.log("Sending to backend:", formattedData);
+    setTimeMode('week')
+    setMode('hazard')
+
+    //console.log("Sending to backend:", formattedData);
 
     // Save all three entries
     fetch('http://localhost:5000/api/chart', {
@@ -70,7 +200,7 @@ function App() {
     })
       .then(res => res.json())
       .then(saved => {
-        console.log('Saved:', saved);
+        //console.log('Saved:', saved);
 
         // Fetch weekly summary grouped by category
         return fetch('http://localhost:5000/api/chart/week-summary');
@@ -91,13 +221,59 @@ function App() {
       .catch(err => console.error('Error saving or fetching chart data:', err));
   };
 
+  // Save monthly hazardous data
+  // Will need user to delete data to start a new month because of project time constraint
+  const handleSaveMonthlyHazardous = () => {
+    const arsenicData = countArsenic();
+    const mercuryData = countMercury();
+    const cadmiumData = countCadmium();
+
+    const formattedData = [
+      { category: 'Arsenic', value: arsenicData },
+      { category: 'Mercury', value: mercuryData },
+      { category: 'Cadmium', value: cadmiumData }
+    ];
+
+    setTimeMode('month')
+    setMode('hazard')
+
+    //console.log("Sending to backend:", formattedData);
+
+    // Save all three entries
+    fetch('http://localhost:5000/api/chart', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(formattedData),
+    })
+      .then(res => res.json())
+      .then(saved => {
+        //console.log('Saved:', saved);
+
+        // Fetch weekly summary grouped by category
+        return fetch('http://localhost:5000/api/chart/week-summary');
+      })
+      .then(res => res.json())
+      .then(summary => {
+        // Normalize chart to ensure all categories are present
+        const normalized = ['Arsenic', 'Mercury', 'Cadmium'].map(cat => {
+          const found = summary.find(d => d.category === cat);
+          return {
+            category: cat,
+            value: found ? found.value : 0
+          };
+        });
+
+        setChartData(normalized);
+      })
+      .catch(err => console.error('Error saving or fetching chart data:', err));
+  };
 
   // Clear BarChart data
   const handleClear = () => {
     fetch('http://localhost:5000/api/chart', { method: 'DELETE' })
       .then(() => {
         setChartData([]);
-        console.log('Chart data cleared');
+        //console.log('Chart data cleared');
       })
       .catch(err => console.error('Error clearing chart data:', err));
   };
@@ -215,6 +391,44 @@ function App() {
   function handleChangeMeasurement(e) {
     setMeasurement(e.target.value);
   }
+
+  // Handles nutritional number changes
+  function handleChangeCalories(e) {
+    setCalories(e.target.value);
+  }
+
+  function handleChangeProtein(e) {
+    setProtein(e.target.value);
+  }
+
+  function handleChangeSaturatedFats(e) {
+    setSaturatedFats(e.target.value);
+  }
+
+  function handleChangeTransFats(e) {
+    setTransFats(e.target.value);
+  }
+
+  function handleChangeCholesterol(e) {
+    setCholesterol(e.target.value);
+  }
+
+  function handleChangeSodium(e) {
+    setSodium(e.target.value);
+  }
+
+  function handleChangeCarbohydrates(e) {
+    setCarbohydrates(e.target.value);
+  }
+
+  function handleChangeFiber(e) {
+    setFiber(e.target.value);
+  }
+
+  function handleChangeSugar(e) {
+    setSugar(e.target.value);
+  }
+
 // MVC: controller ends
 
 // MVC: view starts
@@ -241,24 +455,54 @@ function App() {
 
       {/* Selector uses props to pass information */}
       <Selector
+        onChangeText={e => setFoodText(e.target.value)}
+        onChangeAmount={handleChangeAmount}
+        onChangeCalories={handleChangeCalories}
+        onChangeSaturatedFats={handleChangeSaturatedFats}
+        onChangeTransFats={handleChangeTransFats}
+        onChangeCholesterol={handleChangeCholesterol}
+        onChangeSodium={handleChangeSodium}
+        onChangeCarbohydrates={handleChangeCarbohydrates}
+        onChangeFiber={handleChangeFiber}
+        onChangeSugar={handleChangeSugar}
+        onChangeProtein={handleChangeProtein}
         amountArsenic={countArsenic()}
         amountMercury={countMercury()}
         amountCadmium={countCadmium()}
-        onChangeAmount={handleChangeAmount}
         onChangeMeasurement={handleChangeMeasurement}
         value={measurement}
         foodText={foodText}
-        onChangeText={e => setFoodText(e.target.value)}
       />
 
       {/* Add save and delete buttons and ensure spacing. Add styling */}
       <div className="space-y-4 mt-4">
         <br />
         <button
-          onClick={handleSave}
+          onClick={() =>{ handleSave(); }}
           className="inline-block text-blue-800 text-1xl border border-blue-700 font-bold grid place-items-center h-screen"
         >
-          Show Week Data
+          Show Weekly Data
+        </button>
+        <br />
+        <button
+          onClick={() =>{ handleSaveMonthly(); }}
+          className="inline-block text-blue-800 text-1xl border border-blue-700 font-bold grid place-items-center h-screen"
+        >
+          Show Monthly Data
+        </button>
+        <br />
+        <button
+          onClick={() =>{ handleSaveHazardous(); }}
+          className="inline-block text-blue-800 text-1xl border border-blue-700 font-bold grid place-items-center h-screen"
+        >
+          Show Weekly Hazardous Data
+        </button>
+        <br />
+        <button
+          onClick={() =>{ handleSaveMonthlyHazardous(); }}
+          className="inline-block text-blue-800 text-1xl border border-blue-700 font-bold grid place-items-center h-screen"
+        >
+          Show Monthly Hazardous Data
         </button>
         <br />
         <button
@@ -269,7 +513,7 @@ function App() {
         </button>
       </div>
 
-      <BarChart key={chartData.length} data={chartData}>
+      <BarChart key={chartData.length} data={chartData} timeMode={timeMode} mode={mode}>
       </BarChart>
     </Box>
   );

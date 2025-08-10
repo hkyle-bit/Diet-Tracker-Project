@@ -1,8 +1,7 @@
 //
-// Homework 3
+// Project
 // Selector JavaScript source code
 //
-// Author: Denis Gracanin
 // Author: Kyle Hong
 // Version: 1.0
 //
@@ -20,15 +19,8 @@ import './Selector.css';
 function Selector(props) {
   return (
     <Box className="Selector" component="div">
-      {/* Change div to Box to implement MUI library*/}
+      {/* Box to implement MUI library*/}
 
-        {/* Input type changed to number to only allow correct values */}
-        {/* e is still allowed because React uses it for exponents */}
-        {/* Min being -459.67 because that's the lowest possible temperature from any scale */}
-        {/* Added tooltip that informs the user about the number value box and that it must be used with the scale selector */}
-        {/* Tooltip can't fit above or to the left, */}
-        {/* so I chose to the right because accidentally hovering when selecting Display would be annoying. */}
-        {/* Changed input to Input (html to MUI) */}
         {/* Added Grid container and Grid in order to use MUI Tooltips */}
         {/* Changed html Tooltip to MUI Tooltip, placed inside Grids. */}
         {/* Since they are around the right component hierarchically, they only pop up for that inner component as intended. */}
@@ -109,7 +101,7 @@ function Selector(props) {
             <Tooltip title="Calories" 
               placement="right"
             >
-              <Input type="number" size="8" min="-459.67" onChange={props.onChangeText} data-tooltip-id="Selector-input-tooltip" data-tooltip-place="right"
+              <Input type="number" size="8" min="-459.67" value={props.calories} onChange={props.onChangeCalories} data-tooltip-id="Selector-input-tooltip" data-tooltip-place="right"
                 sx={{
                   background: 'white',
                   color: 'black',
@@ -141,7 +133,7 @@ function Selector(props) {
             <Tooltip title="Saturated Fats" 
               placement="right"
             >
-              <Input type="number" size="8" min="-459.67" onChange={props.onChangeText} data-tooltip-id="Selector-input-tooltip" data-tooltip-place="right"
+              <Input type="number" size="8" min="-459.67" value={props.saturatedFats} onChange={props.onChangeSaturatedFats} data-tooltip-id="Selector-input-tooltip" data-tooltip-place="right"
                 sx={{
                   background: 'white',
                   color: 'black',
@@ -173,7 +165,7 @@ function Selector(props) {
             <Tooltip title="Trans Fats" 
               placement="right"
             >
-              <Input type="number" size="8" min="-459.67" onChange={props.onChangeText} data-tooltip-id="Selector-input-tooltip" data-tooltip-place="right"
+              <Input type="number" size="8" min="-459.67" value={props.transFats} onChange={props.onChangeTransFats} data-tooltip-id="Selector-input-tooltip" data-tooltip-place="right"
                 sx={{
                   background: 'white',
                   color: 'black',
@@ -205,7 +197,7 @@ function Selector(props) {
             <Tooltip title="Cholesterol" 
               placement="right"
             >
-              <Input type="number" size="8" min="-459.67" onChange={props.onChangeText} data-tooltip-id="Selector-input-tooltip" data-tooltip-place="right"
+              <Input type="number" size="8" min="-459.67" value={props.cholesterol} onChange={props.onChangeCholesterol} data-tooltip-id="Selector-input-tooltip" data-tooltip-place="right"
                 sx={{
                   background: 'white',
                   color: 'black',
@@ -239,7 +231,7 @@ function Selector(props) {
             <Tooltip title="Sodium" 
               placement="right"
             >
-              <Input type="number" size="8" min="-459.67" onChange={props.onChangeText} data-tooltip-id="Selector-input-tooltip" data-tooltip-place="right"
+              <Input type="number" size="8" min="-459.67" value={props.sodium} onChange={props.onChangeSodium} data-tooltip-id="Selector-input-tooltip" data-tooltip-place="right"
                 sx={{
                   background: 'white',
                   color: 'black',
@@ -271,7 +263,7 @@ function Selector(props) {
             <Tooltip title="Carbohydrates" 
               placement="right"
             >
-              <Input type="number" size="8" min="-459.67" onChange={props.onChangeText} data-tooltip-id="Selector-input-tooltip" data-tooltip-place="right"
+              <Input type="number" size="8" min="-459.67" value={props.carbohydrates} onChange={props.onChangeCarbohydrates} data-tooltip-id="Selector-input-tooltip" data-tooltip-place="right"
                 sx={{
                   background: 'white',
                   color: 'black',
@@ -303,7 +295,7 @@ function Selector(props) {
             <Tooltip title="Fiber" 
               placement="right"
             >
-              <Input type="number" size="8" min="-459.67" onChange={props.onChangeText} data-tooltip-id="Selector-input-tooltip" data-tooltip-place="right"
+              <Input type="number" size="8" min="-459.67" value={props.fiber} onChange={props.onChangeFiber} data-tooltip-id="Selector-input-tooltip" data-tooltip-place="right"
                 sx={{
                   background: 'white',
                   color: 'black',
@@ -335,7 +327,7 @@ function Selector(props) {
             <Tooltip title="Sugar" 
               placement="right"
             >
-              <Input type="number" size="8" min="-459.67" onChange={props.onChangeText} data-tooltip-id="Selector-input-tooltip" data-tooltip-place="right"
+              <Input type="number" size="8" min="-459.67" value={props.sugar} onChange={props.onChangeSugar} data-tooltip-id="Selector-input-tooltip" data-tooltip-place="right"
                 sx={{
                   background: 'white',
                   color: 'black',
@@ -367,7 +359,7 @@ function Selector(props) {
             <Tooltip title="Protein" 
               placement="right"
             >
-              <Input type="number" size="8" min="-459.67" onChange={props.onChangeText} data-tooltip-id="Selector-input-tooltip" data-tooltip-place="right"
+              <Input type="number" size="8" min="-459.67" value={props.protein} onChange={props.onChangeProtein} data-tooltip-id="Selector-input-tooltip" data-tooltip-place="right"
                 sx={{
                   background: 'white',
                   color: 'black',
@@ -402,7 +394,7 @@ function Selector(props) {
             <Tooltip title="Arsenic" 
               placement="right"
             >
-              <Input type="number" size="8" min="-459.67" disabled value={props.amountArsenic} onChange={props.onChangeAmount} data-tooltip-id="Selector-input-tooltip" data-tooltip-place="right"
+              <Input type="number" size="8" min="-459.67" disabled value={props.amountArsenic} onChange={props.onChangeAmount}
                 sx={{
                   background: 'white',
                   color: 'black',

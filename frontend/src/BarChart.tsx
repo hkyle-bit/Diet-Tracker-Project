@@ -3,7 +3,6 @@
 
 // import React, BarChart from MUI, and D3
 import React, { useEffect, useRef } from 'react';
-import { BarChart } from '@mui/x-charts/BarChart';
 import * as d3 from 'd3';
 
 type DataPoint = {
@@ -14,7 +13,23 @@ type DataPoint = {
 // Data for dangerous substances
 type BarChartProps = {
   data: DataPoint[];
+  timeMode: 'week' | 'month';
+  mode: 'nutrition' | 'hazard';
 };
+
+// Key Map because some titles have spaces
+const keyMap = {
+  'Saturated Fats': 'saturatedFats',
+  'Trans Fats': 'transFats',
+  Calories: 'calories',
+  Cholesterol: 'cholesterol',
+  Sodium: 'sodium',
+  Carbohydrates: 'carbohydrates',
+  Fiber: 'fiber',
+  Sugar: 'sugar',
+  Protein: 'protein'
+};
+
 
 // Some global consts needed to be defined here to use later on
 const margin = { top: 20, right: 20, bottom: 100, left: 50 };
@@ -41,7 +56,7 @@ const MySVGComponent = ({ gl, display }: { gl: WebGLRenderingContext | null; dis
   // React ref for SVG
   const svgRef = useRef<SVGSVGElement | null>(null);
   // Call getDimensions()
-  const { width, height, innerWidth, innerHeight } = getDimensions();
+  const { width, height } = getDimensions();
 
   // Everything must be in a useEffect()
   useEffect(() => {
@@ -70,19 +85,18 @@ const MySVGComponent = ({ gl, display }: { gl: WebGLRenderingContext | null; dis
 };
 
 // Default function
-export default function Chart({ data }: BarChartProps) {
+export default function Chart({ data, timeMode, mode }: BarChartProps) {
   // React ref for SVG
   const svgRef = useRef<SVGSVGElement | null>(null);
   // Call getDimensions here too
   const { width, height, innerWidth, innerHeight } = getDimensions();
-  // Need to ensure data is valid
-  //const data = Array.isArray(data) ? data : [];
-  //const data = Array.isArray(data)
-  //? data.filter(d => typeof d.value === 'number')
- // : [];
 
   // svg and D3 need to be under useEffect()
   const drawChart = (data) => {
+    
+    // Check if its nutrition or hazardous materials
+    const isNutrition = mode === 'nutrition';
+
     // Check if array is valid
     if (!Array.isArray(data) || data.length === 0) return;
 
@@ -99,11 +113,7 @@ export default function Chart({ data }: BarChartProps) {
       .range([0, innerWidth])
       .padding(0.1);
 
-    // Did + 0.07 so 7.0 would be the max without 2 lines.
-    // 0.07 makes it overlap with the max to match with homework 4 picture.
-    // This is because maxValue was 6.930.
-    // 6.930 + 0.07 = 7.00
-    // By default, it created two separate lines.
+    // Y-Axis scale
     const yScale = d3.scaleLinear()
       .domain([0, maxValue * 1.1])
       .range([innerHeight, 0]);
@@ -120,7 +130,14 @@ export default function Chart({ data }: BarChartProps) {
 
     // Axes
     // Create gridTicks each 0.5 apart
-    const gridTicks = d3.range(0, Math.ceil(maxValue) + 0.5, 0.5);
+    let gridTicks = d3.range(0, 20000, 1000);
+
+    if(mode === 'nutrition'){
+      gridTicks = d3.range(0, 20000, 1000);
+    }
+    else{
+      gridTicks = d3.range(0, 0.01, 0.0001);
+    }
 
     // add lines behind the bars barely visible, 0.5 apart
     // numbers should be 0.00001 apart instead of 0.5 (done so further down)
@@ -140,13 +157,21 @@ export default function Chart({ data }: BarChartProps) {
 
     // Separate 0.00001 axis ticks from line ticks above
     // We are measuring tiny values
-    const step = maxValue / 10;
-    const yAxisTicks = d3.range(0, Math.ceil(maxValue), 0.0001); //d3.range(0, Math.ceil(maxValue) + step, step);
+    // Unless doing nutrition
+    let yAxisTicks = d3.range(0, 20000, 1000);
+    
+    if(mode === 'nutrition'){
+      yAxisTicks = d3.range(0, 20000, 1000);
+    }
+    else{
+      yAxisTicks = d3.range(0, 0.01, 0.0001);
+    }
 
     // yAxis calls custom const yAxisTicks that have 0.0001 intervals
+    // Unless doing nutrition
     const yAxis = d3.axisLeft(yScale)
       .tickValues(yAxisTicks)
-      .tickFormat(x => Number(x).toFixed(5));
+      .tickFormat(x => isNutrition ? `${x}` : Number(x).toFixed(5));
 
     // Appends it to svg
     chart.append('g')
@@ -155,12 +180,48 @@ export default function Chart({ data }: BarChartProps) {
 
     // Bars (must be called after gridlines or gridlines will appear in front of bars)
     // Color turns red if above weekly limit
-    const thresholds = {
+    const nutritionalThresholds = {
+      calories: 2000 * 7,
+      saturatedFats: 20 * 7,
+      transFats: 2 * 7,
+      cholesterol: 0.3 * 7,
+      sodium: 2.3 * 7,
+      carbohydrates: 275 * 7,
+      fiber: 28 * 7,
+      sugar: 50 * 7,
+      protein: 50 * 7
+    };
+
+    const nutritionalThresholdsMonthly =
+      timeMode === 'month'
+        ? {
+            calories: nutritionalThresholds.calories * 4,
+            saturatedFats: nutritionalThresholds.saturatedFats * 4,
+            transFats: nutritionalThresholds.transFats * 4,
+            cholesterol: nutritionalThresholds.cholesterol * 4,
+            sodium: nutritionalThresholds.sodium * 4,
+            carbohydrates: nutritionalThresholds.carbohydrates * 4,
+            fiber: nutritionalThresholds.fiber * 4,
+            sugar: nutritionalThresholds.sugar * 4,
+            protein: nutritionalThresholds.protein * 4
+          }
+        : nutritionalThresholds;
+
+    // Hazardous substances
+    const baseThresholds = {
       Arsenic: 1.5e-4,
       Mercury: 1.1e-4,
       Cadmium: 5.0e-4
     };
 
+    const thresholds =
+      timeMode === 'month'
+        ? {
+            Arsenic: baseThresholds.Arsenic * 4,
+            Mercury: baseThresholds.Mercury * 4,
+            Cadmium: baseThresholds.Cadmium * 4
+          }
+        : baseThresholds;
 
     chart.selectAll('rect')
     .data(data, d => d.category)
@@ -170,8 +231,16 @@ export default function Chart({ data }: BarChartProps) {
         .attr('width', xScale.bandwidth())
         .attr('y', d => yScale(d.value))
         .attr('height', d => innerHeight - yScale(d.value ?? 0))
-        .attr('fill', d => d.value > thresholds[d.category] ? '#d32f2f' : '#1976d2'),
-      update => update
+        //Fills based on if the values are above the thresholds for each week
+        .attr('fill', d => {
+          const key = keyMap[d.category] ?? d.category;
+          const threshold = mode === 'nutrition'
+            ? nutritionalThresholdsMonthly[key]
+            : thresholds[d.category];
+          return d.value > threshold ? '#d32f2f' : '#1976d2';
+        }),
+        update => update
+
         .transition()
         .duration(500)
         .attr('y', d => yScale(d.value))
@@ -200,7 +269,7 @@ export default function Chart({ data }: BarChartProps) {
       .attr("text-anchor", "middle")
       .attr("x", width / 2)
       .attr("y", height + margin.bottom - 130)
-      .text("Current food/beverage hazardous substance levels")
+      .text("Current food/beverage substance levels")
       .style("font-size", "16px")
       .style("font-weight", "bold")
       .style("fill", "#333");
@@ -212,7 +281,7 @@ export default function Chart({ data }: BarChartProps) {
       .attr("transform", `rotate(-90)`)
       .attr("x", -height / 2)
       .attr("y", -margin.left + 15)
-      .text("Hazardous substances (grams)")
+      .text("Total Values (grams)")
       .style("font-size", "16px")
       .style("font-weight", "bold")
       .style("fill", "#333");
@@ -242,7 +311,7 @@ export default function Chart({ data }: BarChartProps) {
   if (!Array.isArray(data)) return;
 
   drawChart(data);
-}, [data, drawChart]);
+}, [data, mode]);
 
   // div has variable width and height for responsiveness.
   // svg is created above and called down here.
