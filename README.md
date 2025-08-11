@@ -30,6 +30,7 @@ Node.js, React, JavaScript, TypeScript, MongoDB, Mongoose, MUI, HTML, nodemon, e
 
 ## Demo Video
 
+https://github.com/user-attachments/assets/0d64ae62-2f8d-47a0-9e96-516809bd59d8
 
 ## Future Development Roadmap
 
