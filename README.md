@@ -1049,6 +1049,7 @@ https://github.com/user-attachments/assets/0d64ae62-2f8d-47a0-9e96-516809bd59d8
 
 I plan to add an automatic feature which tracks your last week's information in real life.
 I also need to spend more time fact checking threshold levels.
+After that, I can begin working on pie charts, and possibly health suggestions.
 
 ## Contact Information
 
