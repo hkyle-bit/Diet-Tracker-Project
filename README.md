@@ -8,8 +8,9 @@ This application is meant to help the user track their health on a general basis
 
 The user may pull or download the zip of this project. It will contain everything except for dependencies contained within node_modules. These files are too large to upload, so their names will be listed below. After the dependencies are installed, the user must open a terminal. They will run "npm start" and click the local host url, then open a new terminal. There, they will run "cd backend" to move to the backend. Finally, they will run "npm run dev" to run the backend. 
 
-Reading these in raw format may be easier.
+Reading these in raw format may be easier. Project/backend/node_modules
 node_modules in backend:
+
 Mode                 LastWriteTime         Length Name
 ----                 -------------         ------ ----
 d-----          8/6/2025  11:02 PM                .bin
@@ -63,7 +64,11 @@ d-----          8/6/2025  11:02 PM                webidl-conversions
 d-----          8/6/2025  11:02 PM                whatwg-url
 -a----          8/8/2025  12:11 AM          20842 .package-lock.json
 
+
+Project/frontend/node_modules
 node_modules in frontend:
+
+
 Mode                 LastWriteTime         Length Name
 ----                 -------------         ------ ----
 d-----          8/5/2025  11:20 PM                .bin
