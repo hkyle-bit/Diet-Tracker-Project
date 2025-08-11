@@ -52,12 +52,17 @@ app.delete('/api/chart', async (req, res) => {
 
 // Find latest value
 app.post('/api/chart', async (req, res) => {
-  const entries = Object.entries(req.body);
-  const [category, value] = entries.find(([_, val]) => val !== 0) || [];
+  if (!Array.isArray(req.body)) {
+    return res.status(400).json({ message: 'Expected array of chart data' });
+  }
 
-  if (!category) {
+  const [firstNonZero] = req.body.filter(d => d.value !== 0);
+
+  if (!firstNonZero) {
     return res.status(400).json({ message: 'No non-zero value found' });
   }
+
+  const { category, value } = firstNonZero;
 
   const newEntry = new ChartData({ category, value });
   await newEntry.save();
@@ -65,6 +70,8 @@ app.post('/api/chart', async (req, res) => {
   const latest = await ChartData.findOne({ category }).sort({ _id: -1 });
   res.json(latest);
 });
+
+
 
 // Past week's data
 app.get('/api/chart/week-summary', async (req, res) => {
