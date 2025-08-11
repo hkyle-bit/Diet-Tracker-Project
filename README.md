@@ -1042,6 +1042,7 @@ Delete data function
 Known Issues or Limitations: 
 
 User must delete their data manually for now.
+Responsiveness is limited on smaller screens for the bar chart because there are just too many labels to fit on mobile.
 
 Future Planned Features:
 
