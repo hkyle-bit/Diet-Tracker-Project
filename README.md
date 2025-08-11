@@ -6,7 +6,7 @@ This application is meant to help the user track their health on a general basis
 
 ## Installation and Setup Instructions
 
-The user may pull or download the zip of this project. It will contain everything except for dependencies contained within node_modules. These files are too large to upload, so their names will be listed below. After the dependencies are installed, the user must open a terminal. They will run "npm start" and click the local host url, then open a new terminal. There, they will run "cd backend" to move to the backend. Finally, they will run "npm run dev" to run the backend. 
+The user may pull or download the zip of this project. It will contain everything except for dependencies contained within node_modules. These files are too large to upload, so their names will be listed below. After the dependencies are installed, the user must open a terminal. They will run cd frontend and run "npm start" and click the local host url, then open a new terminal. There, they will run "cd backend" to move to the backend. Finally, they will run "npm run dev" to run the backend. 
 
 Reading these in raw format may be easier. Project/backend/node_modules
 node_modules in backend:
