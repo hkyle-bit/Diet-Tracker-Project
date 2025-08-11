@@ -1042,7 +1042,8 @@ Delete data function
 Known Issues or Limitations: 
 
 User must delete their data manually for now.
-Responsiveness is limited on smaller screens for the bar chart because there are just too many labels to fit on mobile.
+Responsiveness on the X-Axis labels for the bar charts is limited on smaller screens because there are too many labels to fit on mobile.
+The rest of the bar chart and application are responsive.
 
 Future Planned Features:
 
