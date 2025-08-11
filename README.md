@@ -2,7 +2,7 @@
 
 ## App Description and Purpose
 
-This application is meant to help the user track their health on a general basis. The user must input correct values for all fields except for the hazardous materials section. These fields are automatically calculated based on average values.
+This application is meant to help the user track their health on a general basis. The user must input correct values for all fields except for the hazardous materials section. The hazardous materials fields are automatically calculated based on average values.
 
 ## Installation and Setup Instructions
 
