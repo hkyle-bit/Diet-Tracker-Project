@@ -287,6 +287,11 @@ function App() {
       dangerousAmount = 0.000000300 * amount;
     }
 
+    // If in ounces, convert to ounces
+    if(Number(measurement) === 1){
+      dangerousAmount *= 28.3495;
+    }
+
     return dangerousAmount;
   }
   
@@ -327,6 +332,11 @@ function App() {
       mercuryAmount = 0.00000099 * amount;
     }
 
+    // If in ounces, convert to ounces
+    if(Number(measurement) === 1){
+      mercuryAmount *= 28.3495;
+    }
+
     return mercuryAmount;
   }
 
@@ -357,6 +367,11 @@ function App() {
     if(isMatchCadmium && amount > 0 && foodText.toLowerCase().includes(targetCadmium[5])){
       // 0.000001015 grams of cadmium per gram of seaweed on average
       dangerousAmount = 0.000001015 * amount;
+    }
+
+    // If in ounces, convert to ounces
+    if(Number(measurement) === 1){
+      dangerousAmount *= 28.3495;
     }
 
     return dangerousAmount;
