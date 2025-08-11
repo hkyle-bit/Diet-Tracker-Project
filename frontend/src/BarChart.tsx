@@ -5,12 +5,13 @@
 import React, { useEffect, useRef } from 'react';
 import * as d3 from 'd3';
 
+// Data from Mongoose
 type DataPoint = {
   category: string;
   value: number;
 };
 
-// Data for dangerous substances
+// Data for week/month, nutrition/dangerous substances, and grams/ounces
 type BarChartProps = {
   data: DataPoint[];
   timeMode: 'week' | 'month';
@@ -95,6 +96,9 @@ export default function Chart({ data, timeMode, mode, measurement }: BarChartPro
   // svg and D3 need to be under useEffect()
   const drawChart = (data) => {
     
+    // Call inside drawChart for responsiveness
+    const { width, height, innerWidth, innerHeight } = getDimensions();
+    
     // Check if its nutrition or hazardous materials
     const isNutrition = mode === 'nutrition';
 
@@ -130,18 +134,18 @@ export default function Chart({ data, timeMode, mode, measurement }: BarChartPro
       .attr('transform', `translate(${margin.left},${margin.top})`);
 
     // Axes
-    // Create gridTicks each 0.5 apart
+    // Create gridTicks each 1000 apart because it's Calories per week/month
     let gridTicks = d3.range(0, 20000, 1000);
 
     if(mode === 'nutrition'){
       gridTicks = d3.range(0, 20000, 1000);
     }
     else{
+      // If it's checking for hazards, make scale way smaller
       gridTicks = d3.range(0, 0.01, 0.0001);
     }
 
-    // add lines behind the bars barely visible, 0.5 apart
-    // numbers should be 0.00001 apart instead of 0.5 (done so further down)
+    // add lines behind the bars barely visible
     const gridGroup = chart.append('g').attr('class', 'gridlines');
 
     // line ticks
@@ -156,7 +160,7 @@ export default function Chart({ data, timeMode, mode, measurement }: BarChartPro
       .attr('stroke', '#ddd')
       .attr('stroke-width', 1);
 
-    // Separate 0.00001 axis ticks from line ticks above
+    // Separate axis ticks from line ticks above
     // We are measuring tiny values
     // Unless doing nutrition
     let yAxisTicks = d3.range(0, 20000, 1000);
@@ -181,6 +185,7 @@ export default function Chart({ data, timeMode, mode, measurement }: BarChartPro
 
     // Bars (must be called after gridlines or gridlines will appear in front of bars)
     // Color turns red if above weekly limit
+    // Thresholds are shown below as consts
     const nutritionalThresholds = {
       calories: 2000 * 7,
       saturatedFats: 20 * 7,
@@ -287,7 +292,7 @@ export default function Chart({ data, timeMode, mode, measurement }: BarChartPro
         .attr('width', xScale.bandwidth())
         .attr('y', d => yScale(d.value))
         .attr('height', d => innerHeight - yScale(d.value ?? 0))
-        //Fills based on if the values are above the thresholds for each week
+        // Fills based on if the values are above the thresholds for each week
         .attr('fill', d => {
           const key = keyMap[d.category] ?? d.category;
           const rawThreshold = mode === 'nutrition'
@@ -299,6 +304,7 @@ export default function Chart({ data, timeMode, mode, measurement }: BarChartPro
             ? rawThreshold / GRAMS_PER_OUNCE
             : rawThreshold;
 
+          // If above threshold, paint red. Normally blue.
           return d.value > threshold ? '#d32f2f' : '#1976d2';
         }),
         update => update
@@ -347,7 +353,7 @@ export default function Chart({ data, timeMode, mode, measurement }: BarChartPro
       .style("font-weight", "bold")
       .style("fill", "#333");
 
-      // Little Bars above the years
+      // Little Bars above the names
       chart.selectAll('.bar-marker')
         .data(data, d => d.category)
         .join(

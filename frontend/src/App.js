@@ -15,7 +15,6 @@ import { useState } from 'react';
 // import output.css for Tailwind usage by CDN
 import './output.css';
 
-// Limitation: Not using MongoDB, not tracking common health numbers such as fats for danger levels
 function App() {
 // MVC: model starts
   // Used in MVC controller functions to set the food/beverage title and amount in grams
@@ -63,7 +62,7 @@ function App() {
   const [chartData, setChartData] = useState([]);
 
   // Save weekly data
-  // Will need user to delete data to start a new week because of project time constraint
+  // Will need user to delete data to start a new week/month because of project time constraint
   const handleSave = () => {
     const formattedData = [
       { category: 'Calories', value: calories },
@@ -88,8 +87,6 @@ function App() {
     })
       .then(res => res.json())
       .then(saved => {
-       // console.log('Saved:', saved);
-
         // Fetch weekly summary grouped by category
         return fetch('http://localhost:5000/api/chart/week-summary');
       })
@@ -144,8 +141,6 @@ function App() {
     })
       .then(res => res.json())
       .then(saved => {
-       // console.log('Saved:', saved);
-
         // Fetch weekly summary grouped by category
         return fetch('http://localhost:5000/api/chart/week-summary');
       })
@@ -190,8 +185,6 @@ function App() {
     setTimeMode('week')
     setMode('hazard')
 
-    //console.log("Sending to backend:", formattedData);
-
     // Save all three entries
     fetch('http://localhost:5000/api/chart', {
       method: 'POST',
@@ -200,8 +193,6 @@ function App() {
     })
       .then(res => res.json())
       .then(saved => {
-        //console.log('Saved:', saved);
-
         // Fetch weekly summary grouped by category
         return fetch('http://localhost:5000/api/chart/week-summary');
       })
@@ -237,8 +228,6 @@ function App() {
     setTimeMode('month')
     setMode('hazard')
 
-    //console.log("Sending to backend:", formattedData);
-
     // Save all three entries
     fetch('http://localhost:5000/api/chart', {
       method: 'POST',
@@ -247,8 +236,6 @@ function App() {
     })
       .then(res => res.json())
       .then(saved => {
-        //console.log('Saved:', saved);
-
         // Fetch weekly summary grouped by category
         return fetch('http://localhost:5000/api/chart/week-summary');
       })
@@ -273,7 +260,6 @@ function App() {
     fetch('http://localhost:5000/api/chart', { method: 'DELETE' })
       .then(() => {
         setChartData([]);
-        //console.log('Chart data cleared');
       })
       .catch(err => console.error('Error clearing chart data:', err));
   };
@@ -290,7 +276,7 @@ function App() {
     // It will only show meaningful results over a longer period of time
     // Rounding would keep adding 0 to the total instead of the actual amount
     // Known limitations: Can only track food that has been coded for, and only 1 harmful substance at a time
-    // Numbers will turn red for AVERAGE body weight
+    // Bars will turn red for AVERAGE body weight
     if(isMatchArsenic && amount > 0 && foodText.toLowerCase().includes(targetArsenic[0])){
       // 150 parts per billion of arsenic per gram of white rice on average
       dangerousAmount = 0.000000150 * amount;
@@ -315,8 +301,7 @@ function App() {
     // It will only show meaningful results over a longer period of time
     // Rounding would keep adding 0 to the total instead of the actual amount
     // Known limitations: Can only track food that has been coded for, and only 1 harmful substance at a time
-    // Numbers will turn red for AVERAGE body weight
-    // Eventually need to change it so it turns red if the number is too high from MongooseDB
+    // Bars will turn red for AVERAGE body weight
 
     // Safe weekly Tuna amount
     if(isMatchMercury && amount > 0 && foodText.toLowerCase().includes(targetMercury[0])){
@@ -357,7 +342,7 @@ function App() {
     // It will only show meaningful results over a longer period of time
     // Rounding would keep adding 0 to the total instead of the actual amount
     // Known limitations: Can only track food that has been coded for, and only 1 harmful substance at a time
-    // Numbers will turn red for AVERAGE body weight
+    // Bars will turn red for AVERAGE body weight
     if(isMatchCadmium && amount > 0 && (foodText.toLowerCase().includes(targetCadmium[0]) ||
     foodText.toLowerCase().includes(targetCadmium[1]) || foodText.toLowerCase().includes(targetCadmium[2]))){
       // 0.00000125 grams of cadmium per gram of mollusks on average
@@ -384,10 +369,12 @@ function App() {
     setText(e.target.value);
   }
 
+  // function that reads "amount"
   function handleChangeAmount(e) {
     setAmount(e.target.value);
   }
 
+  // function that reads grams or ounces
   function handleChangeMeasurement(e) {
     setMeasurement(e.target.value);
   }

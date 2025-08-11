@@ -16,8 +16,7 @@ import MenuItem from '@mui/material/MenuItem';
 import './Selector.css';
 
 // props info is from App.js
-// has a dropdown menu to change scale from 4 different choices
-// as well as an input box to enter a number (must be at least absolute zero for the chosen scale)
+// has a dropdown menu to change measurement from 2 different choices
 function Selector(props) {
   return (
     <Box className="Selector" component="div">
@@ -28,6 +27,7 @@ function Selector(props) {
         {/* Since they are around the right component hierarchically, they only pop up for that inner component as intended. */}
       <Grid container spacing={2} sx={{ justifyContent: 'left' }}>
         {/* Four inner grids to make Four columns */}
+        {/* Food/Beverage Field */}
         <Grid>
           <Toolbar 
             sx={{ color: 'darkblue', fontFamily: 'Times-New-Roman', fontSize: '16px', disablePadding: 'true'}}
@@ -61,6 +61,7 @@ function Selector(props) {
               </Input>
             </Tooltip>
 
+              {/* This is the grams/ounces button */}
               <Select onChange={props.onChangeMeasurement} value={props.value} defaultValue={0} data-tooltip-id="Selector-scales-tooltip" data-tooltip-place="right"
               MenuProps={{ 
                 MenuListProps: { 
@@ -113,6 +114,8 @@ function Selector(props) {
           </Grid>
 
         <Grid>
+          
+          {/* Amount Field */}
           <Toolbar 
             sx={{ color: 'darkblue', fontFamily: 'Times-New-Roman', fontSize: '16px', disablePadding: 'true'}}
           >
@@ -145,6 +148,7 @@ function Selector(props) {
               </Input>
             </Tooltip>
 
+          {/* The next nine fields are the nutrition fields separated by grids for layout reasons. */}
           <Toolbar 
             sx={{ color: 'darkblue', fontFamily: 'Times-New-Roman', fontSize: '16px', disablePadding: 'true'}}
           >
