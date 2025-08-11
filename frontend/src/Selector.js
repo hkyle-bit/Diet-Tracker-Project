@@ -11,6 +11,8 @@ import Input from '@mui/material/Input';
 import Tooltip from '@mui/material/Tooltip';
 import Grid from '@mui/material/Grid';
 import Toolbar from '@mui/material/Toolbar';
+import Select from '@mui/material/Select';
+import MenuItem from '@mui/material/MenuItem';
 import './Selector.css';
 
 // props info is from App.js
@@ -58,15 +60,65 @@ function Selector(props) {
               >
               </Input>
             </Tooltip>
+
+              <Select onChange={props.onChangeMeasurement} value={props.value} defaultValue={0} data-tooltip-id="Selector-scales-tooltip" data-tooltip-place="right"
+              MenuProps={{ 
+                MenuListProps: { 
+                  disablePadding: true 
+                } 
+              }}
+              sx={{
+                  background: 'darkblue',
+                  color: 'white',
+                  fontSize: '13px',
+                  width: '100px', 
+                  height: '20px', 
+                  fontFamily: 'Arial',
+                  border: '1px solid gray',
+                  display: 'flex-start',
+                  paddingTop: '0',
+                  '& .MuiSelect-select': {
+                    textAlign: 'left',         
+                    color: 'white',   
+                  },
+                  '& svg': {
+                    fill: 'white',
+                  },
+                }}
+              >
+                
+                {/* MUI MenuItem replaced HTML options */}
+                <MenuItem value={0} sx={{
+                  backgroundColor: 'darkblue',
+                  color: 'white',
+                  fontSize: '13px',
+                  width: '100px', 
+                  height: '20px', 
+                  fontFamily: 'Arial',
+                  border: '1px solid gray',
+                  display: 'flex-start',
+                  
+                }}>Grams</MenuItem>
+                <MenuItem value={1} sx={{
+                  backgroundColor: 'darkblue',
+                  color: 'white',
+                  fontSize: '13px',
+                  width: '100px', 
+                  height: '20px', 
+                  fontFamily: 'Arial',
+                  border: '1px solid gray',
+                  display: 'flex-start',
+                }}>Ounces</MenuItem>
+              </Select>
           </Grid>
 
         <Grid>
           <Toolbar 
             sx={{ color: 'darkblue', fontFamily: 'Times-New-Roman', fontSize: '16px', disablePadding: 'true'}}
           >
-            Amount (Grams)
+            Amount
           </Toolbar>
-            <Tooltip title="Amount (Grams)" 
+            <Tooltip title="Amount" 
               placement="right"
             >
               <Input type="number" size="8" min="-459.67" onChange={props.onChangeAmount} data-tooltip-id="Selector-input-tooltip" data-tooltip-place="right"

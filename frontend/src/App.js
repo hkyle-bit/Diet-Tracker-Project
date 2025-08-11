@@ -449,9 +449,6 @@ function App() {
       > 
         Diet Tracker
       </Toolbar>
-      <Box className="text-blue-800 grid place-items-center h-screen">
-        All measurements are in grams.
-      </Box>
 
       {/* Selector uses props to pass information */}
       <Selector
@@ -513,7 +510,7 @@ function App() {
         </button>
       </div>
 
-      <BarChart key={chartData.length} data={chartData} timeMode={timeMode} mode={mode}>
+      <BarChart key={chartData.length} data={chartData} timeMode={timeMode} mode={mode} measurement={measurement}>
       </BarChart>
     </Box>
   );

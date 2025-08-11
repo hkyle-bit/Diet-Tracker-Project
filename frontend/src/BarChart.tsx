@@ -15,6 +15,7 @@ type BarChartProps = {
   data: DataPoint[];
   timeMode: 'week' | 'month';
   mode: 'nutrition' | 'hazard';
+  measurement: 'grams' | 'ounces';
 };
 
 // Key Map because some titles have spaces
@@ -85,7 +86,7 @@ const MySVGComponent = ({ gl, display }: { gl: WebGLRenderingContext | null; dis
 };
 
 // Default function
-export default function Chart({ data, timeMode, mode }: BarChartProps) {
+export default function Chart({ data, timeMode, mode, measurement }: BarChartProps) {
   // React ref for SVG
   const svgRef = useRef<SVGSVGElement | null>(null);
   // Call getDimensions here too
@@ -207,6 +208,39 @@ export default function Chart({ data, timeMode, mode }: BarChartProps) {
           }
         : nutritionalThresholds;
 
+    const GRAMS_PER_OUNCE = 28.3495;
+
+    const nutritionalThresholdsOunces =
+      Number(measurement) === 1
+        ? {
+            calories: 2000 * 7,
+            saturatedFats: (20 * 7) / GRAMS_PER_OUNCE,
+            transFats: (2 * 7) / GRAMS_PER_OUNCE,
+            cholesterol: (0.3 * 7) / GRAMS_PER_OUNCE,
+            sodium: (2.3 * 7) / GRAMS_PER_OUNCE,
+            carbohydrates: (275 * 7) / GRAMS_PER_OUNCE,
+            fiber: (28 * 7) / GRAMS_PER_OUNCE,
+            sugar: (50 * 7) / GRAMS_PER_OUNCE,
+            protein: (50 * 7) / GRAMS_PER_OUNCE
+          }
+            : nutritionalThresholds;
+
+    const nutritionalThresholdsMonthlyOunces =
+      timeMode === 'month' && Number(measurement) === 1
+        ? {
+            calories: 2000 * 7 * 4,
+            saturatedFats: (20 * 7 * 4) / GRAMS_PER_OUNCE,
+            transFats: (2 * 7 * 4) / GRAMS_PER_OUNCE,
+            cholesterol: (0.3 * 7 * 4) / GRAMS_PER_OUNCE,
+            sodium: (2.3 * 7 * 4) / GRAMS_PER_OUNCE,
+            carbohydrates: (275 * 7 * 4) / GRAMS_PER_OUNCE,
+            fiber: (28 * 7 * 4) / GRAMS_PER_OUNCE,
+            sugar: (50 * 7 * 4) / GRAMS_PER_OUNCE,
+            protein: (50 * 7 * 4) / GRAMS_PER_OUNCE
+          }
+            : nutritionalThresholdsMonthly;
+
+
     // Hazardous substances
     const baseThresholds = {
       Arsenic: 1.5e-4,
@@ -223,6 +257,28 @@ export default function Chart({ data, timeMode, mode }: BarChartProps) {
           }
         : baseThresholds;
 
+    // Weekly thresholds in ounces
+    const OUNCES_PER_GRAM = 0.03527396;
+
+    const heavyMetalThresholdsOunces =
+      Number(measurement) === 1
+        ? {
+            Arsenic: (1.5e-4) * OUNCES_PER_GRAM,
+            Mercury: (1.1e-4) * OUNCES_PER_GRAM,
+            Cadmium: (5.0e-4) * OUNCES_PER_GRAM
+          }
+        : baseThresholds;
+
+    // Monthly thresholds in ounces
+    const heavyMetalThresholdsMonthlyOunces =
+      timeMode === 'month' && Number(measurement) === 1
+        ? {
+            Arsenic: (1.5e-4 * 7) * OUNCES_PER_GRAM,
+            Mercury: (1.1e-4 * 7) * OUNCES_PER_GRAM,
+            Cadmium: (5.0e-4 * 7) * OUNCES_PER_GRAM
+          }
+        : thresholds;
+
     chart.selectAll('rect')
     .data(data, d => d.category)
     .join(
@@ -234,13 +290,18 @@ export default function Chart({ data, timeMode, mode }: BarChartProps) {
         //Fills based on if the values are above the thresholds for each week
         .attr('fill', d => {
           const key = keyMap[d.category] ?? d.category;
-          const threshold = mode === 'nutrition'
+          const rawThreshold = mode === 'nutrition'
             ? nutritionalThresholdsMonthly[key]
             : thresholds[d.category];
+
+          // Convert threshold to ounces if needed
+          const threshold = Number(measurement) === 1
+            ? rawThreshold / GRAMS_PER_OUNCE
+            : rawThreshold;
+
           return d.value > threshold ? '#d32f2f' : '#1976d2';
         }),
         update => update
-
         .transition()
         .duration(500)
         .attr('y', d => yScale(d.value))
@@ -311,7 +372,7 @@ export default function Chart({ data, timeMode, mode }: BarChartProps) {
   if (!Array.isArray(data)) return;
 
   drawChart(data);
-}, [data, mode]);
+}, [data, mode, measurement]);
 
   // div has variable width and height for responsiveness.
   // svg is created above and called down here.
