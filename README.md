@@ -1023,6 +1023,8 @@ d-----          8/2/2025  12:25 AM                yocto-queue
 
 ## Feature List with screenshots
 
+Currently working features:
+
 Unit measurement option (gram/ounces)
 <img width="395" height="187" alt="image" src="https://github.com/user-attachments/assets/c74190cc-7eea-43be-a3bb-ac3f3b615627" />
 
@@ -1036,6 +1038,14 @@ The data is appended each time the user inputs any data
 
 Delete data function
 <img width="362" height="218" alt="image" src="https://github.com/user-attachments/assets/a1007da8-0dfb-407e-904f-569bbb58c838" />
+
+Known Issues or Limitations: 
+
+User must delete their data manually for now.
+
+Future Planned Features:
+
+Automatic weekly/monthly data using timestamps instead of user deletions.
 
 ## Technology Stack Used
 
